@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css" >
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+
+    </head>
+    <body>
+
+        <div class="container" style="padding: 20px">
+
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Guards</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Vehicles</a>
+                    </div>
+                </nav>
+
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button class="btn  custom-btn" data-toggle="modal" data-target="#exampleModalCente">Register Guard</button>
+                            </div>
+                            <div class="col-md-4">
+                                <form action="#" method="GET">
+                                    <input type="text" name="search" required/>
+                                    <button type="submit">Search</button>
+                                </form>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-striped display compact table-bordered table-sm table-responsive-sm" id="t">
+                                    <thead>
+                                    <tr>
+                                        <th>S/N</th>
+                                        <th>Name</th>
+                                        <th>Age</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="guard:${guards}">
+                                            <th scope="row" th:text="${guard.getId()}"></th>
+                                            <td th:text="${guard.getName()}"></td>
+                                            <td th:text="${guard.calculateAge(guard.getDateOfBirth())}"></td>
+                                            <td>
+                                                <a th:href="@{/showGuard/{id}(id=${guard.id})}"><i class="fa fa-eye"></i></a>
+                                                <span data-toggle="modal" data-target="#edit" th:attr="data-target='#edit'+${guard.id}" style="color: green"><i class="fa fa-edit"></i></span>
+                                                <span data-toggle="modal" data-target="#delete" th:attr="data-target='#delete'+${guard.id}" style="color: red"><i class="fa fa-trash"></i></i></span>
+
+                                                <div class="modal fade" th:id="delete+${guard.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"> Deleting Guard</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <form th:action="@{/deleteGuard/{id}(id=${guard.id})}">
+                                                                <div class="modal-body">
+                                                                        <div class="row">Are you Sure you want to delete &nbsp; <span th:text="${guard.getName()}"></span></div>
+
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                                                                    <button type="submit" class="btn btn-primary">Delete</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal fade" th:id="edit+${guard.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"> Updating Guard Information</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <form th:action="@{/updateGuard/{id}(id=${guard.id})}">
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+                                                                        <div class="form-group col-md-6">
+                                                                            <label for="">Name</label>
+                                                                            <input type="text" name="name" th:value="${guard.getName()}" class="form-control">
+                                                                        </div>
+                                                                        <div class="form-group col-md-6">
+                                                                            <label for="">Date of Birth</label>
+                                                                            <input type="date" name="dateOfBirth" th:value="${guard.getDateOfBirth()}" class="form-control" >
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show" id="nav-profile" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button class="btn  custom-btn" data-toggle="modal" data-target="#exampleModalCenter">Register Vehicle</button>
+                            </div>
+                            <div class="col-md-4">
+                                <form action="/search" method="GET">
+                                    <input type="text" name="search" required/>
+                                    <button type="submit">Search</button>
+                                </form>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-striped display compact table-bordered table-sm table-responsive-sm" id="a">
+                                    <thead>
+                                    <tr>
+                                        <th>S/N</th>
+                                        <th>Plate Number</th>
+                                        <th>Color</th>
+                                        <th>Make</th>
+                                        <th colspan="2">Time In</th>
+                                        <th colspan="2">Time Out</th>
+                                        <th>Guard</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="vehicle:${vehicles}">
+                                            <th scope="row" th:text="${vehicle.getId()}">1</th>
+                                            <td th:text="${vehicle.getPlateNumber()}"></td>
+                                            <td th:text="${vehicle.getColor()}"></td>
+                                            <td th:text="${vehicle.getMake()}"></td>
+                                            <td colspan="2" th:text="${#temporals.format(vehicle.getTimeIn(),'dd-MM-yyyy HH:mm')}"></td>
+                                            <td colspan="2" th:text="${#temporals.format(vehicle.getTimeOut(),'dd-MM-yyyy HH:mm')}"></td>
+                                            <td th:text="${vehicle.getGuard().getName()}"></td>
+                                            <td>
+                                                <span data-toggle="modal" data-target="#showVehicle" th:attr="data-target='#showVehicle'+${vehicle.id}" style="color: dodgerblue"><i class="fa fa-eye"></i></span>
+                                                <span data-toggle="modal" data-target="#editVehicle" th:attr="data-target='#editVehicle'+${vehicle.id}" style="color: green"><i class="fa fa-edit"></i></span>
+                                                <span data-toggle="modal" data-target="#deleteVehicle" th:attr="data-target='#deleteVehicle'+${vehicle.id}" style="color: red"><i class="fa fa-trash"></i></i></span>
+
+                                                <div class="modal fade" th:id="showVehicle+${vehicle.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Vehicle Details</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <table>
+                                                                    <tr>
+                                                                        <td><strong>Plate Number</strong></td>
+                                                                        <td colspan="2" style="padding-left: 10px" th:text="${vehicle.getPlateNumber()}"> </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><strong>Color</strong></td>
+                                                                        <td colspan="2" style="padding-left: 10px" th:text="${vehicle.getColor()}"> </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><strong>Make</strong></td>
+                                                                        <td colspan="2" style="padding-left: 10px" th:text="${vehicle.getMake()}"> </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><strong>Time In</strong></td>
+                                                                        <td colspan="2" style="padding-left: 10px" th:text="${#temporals.format(vehicle.getTimeIn(),'dd-MM-yyyy HH:mm')}"> </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><strong>Time Out</strong></td>
+                                                                        <td colspan="2" style="padding-left: 10px" th:text="${#temporals.format(vehicle.getTimeOut(),'dd-MM-yyyy HH:mm')}"> </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><strong>Guard</strong></td>
+                                                                        <td style="padding-left: 10px" th:text="${vehicle.getGuard().getName()}"> </td>
+                                                                        <td><a th:href="@{/showGuard/{id}(id=${vehicle.getGuard().getId()})}" class="badge badge-primary">View Guard</a></td>
+                                                                    </tr>
+                                                                </table>
+
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="modal fade" th:id="deleteVehicle+${vehicle.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Deleting Vehicle</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <form th:action="@{/deleteVehicle/{id}(id=${vehicle.id})}">
+                                                                <div class="modal-body">
+                                                                    <div class="row">Are you Sure you want to delete &nbsp; <span th:text="${vehicle.getPlateNumber()}"></span></div>
+
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                                                                    <button type="submit" class="btn btn-primary">Delete</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal fade" th:id="editVehicle+${vehicle.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"> Updating Vehicle Information</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <form th:action="@{/updateVehicle/{id}(id=${vehicle.id})}">
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+                                                                        <div class="form-group col-md-6">
+                                                                            <label for="">Plate Number</label>
+                                                                            <input type="text" name="plateNumber" th:value="${vehicle.getPlateNumber()}" class="form-control">
+                                                                        </div>
+                                                                        <div class="form-group col-md-6">
+                                                                            <label for="">Make</label>
+                                                                            <input type="text" name="make" th:value="${vehicle.getMake()}" class="form-control" >
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group col-md-6">
+                                                                            <label for="">Color</label>
+                                                                            <input type="text" name="color" th:value="${vehicle.getColor()}" class="form-control">
+                                                                        </div>
+                                                                        <div class="form-group col-md-6">
+                                                                            <label for="">Time In</label>
+                                                                            <input type="datetime-local" name="timeIn" th:value="${vehicle.getTimeIn()}" class="form-control" >
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group col-md-6">
+                                                                            <label for="">Time Out</label>
+                                                                            <input type="datetime-local" name="timeOut" th:value="${vehicle.getTimeOut()}" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="modal fade" id="exampleModalCente" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Guard</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/storeGuard" method="POST">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="">Name</label>
+                                        <input type="text" name="name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="">Date of Birth</label>
+                                        <input type="date" name="dateOfBirth" class="form-control" >
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Register Vehicle</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/storeVehicle" method="POST">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="">Registration Number</label>
+                                        <input type="text" name="plateNumber" class="form-control" id="" >
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="">Make</label>
+                                        <input type="text" name="make" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="">Color</label>
+                                        <input type="text" name="color" class="form-control"  >
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="">Time In</label>
+                                        <input type="datetime-local" name="timeIn" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="">Time Out</label>
+                                        <input type="datetime-local" name="timeOut" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Guard</label>
+                                        <br>
+                                        <select class="form-control" id="select" type="text" name="guard" required>
+                                            <option value="" selected>SELECT GUARD</option>
+                                            <option th:each="guard:${guards}" th:value="${guard.id}" th:text="${guard.getName()}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+        <script  src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script  src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+        <script  src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+        <script  src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script  src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script  src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script  src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+        <script  src=" https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+
+
+        <script>
+            $(document).ready( function () {
+                $('#table').DataTable();
+                $('#t').DataTable();
+                $('#ta').DataTable();
+                $('#a').DataTable();
+
+
+
+
+            } );
+        </script>
+
+    </body>
+</html>
